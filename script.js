@@ -29,27 +29,54 @@
     'course-2600': 'course.jpg', 'course-3800': 'course-3800.jpg'
   };
 
-  // スマホ表示用のカテゴリー見出し。料理の並び順はHTML側で管理します。
-  const categoryStarts = {
-    'gyoza': '点心',
-    'ramen': '麺類',
-    'fried-rice': 'ご飯もの',
-    'mapo': '一品料理',
-    'daily-lunch': '定食・ランチ',
-    'ramen-set': 'セットメニュー',
-    'course-2600': '宴会コース'
-  };
+  // 全端末共通のカテゴリーアコーディオン。
+  const menuCategories = [
+    { name: '点心', ids: ['gyoza', 'boiled-gyoza', 'spring-roll', 'shumai'] },
+    { name: '麺類', ids: ['ramen', 'chashu-men', 'mapo-ramen', 'gomoku-ramen'] },
+    { name: 'ご飯もの', ids: ['fried-rice', 'tenshin', 'mapo-don', 'chuka-don'] },
+    { name: '一品料理', ids: ['mapo', 'subuta', 'hoikoro', 'ebi-chili', 'karaage', 'nira-reba'] },
+    { name: '定食・ランチ', ids: ['daily-lunch', 'teishoku'] },
+    { name: 'セットメニュー', ids: ['ramen-set', 'fried-rice-set', 'gyoza-set'] },
+    { name: '宴会コース', ids: ['course-2600', 'course-3800'] }
+  ];
+
+  const menuList = document.querySelector('.menu-list');
+  if (menuList) {
+    const cards = new Map([...menuList.querySelectorAll('[data-dish]')].map((card) => [card.dataset.dish, card]));
+    const sections = menuCategories.map((category, index) => {
+      const section = document.createElement('section');
+      section.className = 'menu-accordion';
+      const heading = document.createElement('h3');
+      const button = document.createElement('button');
+      const panel = document.createElement('div');
+      const panelId = `menu-category-${index + 1}`;
+
+      button.type = 'button';
+      button.className = 'menu-category-button';
+      button.setAttribute('aria-expanded', 'false');
+      button.setAttribute('aria-controls', panelId);
+      button.innerHTML = `<span>${category.name}</span><small>${category.ids.length}品</small>`;
+      panel.className = 'menu-category-panel';
+      panel.id = panelId;
+      panel.hidden = true;
+      category.ids.forEach((id) => cards.get(id) && panel.append(cards.get(id)));
+
+      button.addEventListener('click', () => {
+        const open = button.getAttribute('aria-expanded') !== 'true';
+        button.setAttribute('aria-expanded', String(open));
+        panel.hidden = !open;
+      });
+      heading.append(button);
+      section.append(heading, panel);
+      return section;
+    });
+    menuList.replaceChildren(...sections);
+  }
 
   document.querySelectorAll('[data-dish]').forEach((item, index) => {
     const id = item.dataset.dish;
     const dishName = item.querySelector('span')?.textContent || '料理';
     const panelId = `allergy-${index + 1}`;
-    if (categoryStarts[id]) {
-      const heading = document.createElement('h3');
-      heading.className = 'menu-category-heading';
-      heading.textContent = categoryStarts[id];
-      item.before(heading);
-    }
     const photo = document.createElement('div');
     photo.className = 'menu-item-photo';
     const image = document.createElement('img');
