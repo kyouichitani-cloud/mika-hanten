@@ -29,10 +29,27 @@
     'course-2600': 'course.jpg', 'course-3800': 'course-3800.jpg'
   };
 
+  // スマホ表示用のカテゴリー見出し。料理の並び順はHTML側で管理します。
+  const categoryStarts = {
+    'gyoza': '点心',
+    'ramen': '麺類',
+    'fried-rice': 'ご飯もの',
+    'mapo': '一品料理',
+    'daily-lunch': '定食・ランチ',
+    'ramen-set': 'セットメニュー',
+    'course-2600': '宴会コース'
+  };
+
   document.querySelectorAll('[data-dish]').forEach((item, index) => {
     const id = item.dataset.dish;
     const dishName = item.querySelector('span')?.textContent || '料理';
     const panelId = `allergy-${index + 1}`;
+    if (categoryStarts[id]) {
+      const heading = document.createElement('h3');
+      heading.className = 'menu-category-heading';
+      heading.textContent = categoryStarts[id];
+      item.before(heading);
+    }
     const photo = document.createElement('div');
     photo.className = 'menu-item-photo';
     const image = document.createElement('img');
