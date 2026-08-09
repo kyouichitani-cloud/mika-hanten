@@ -71,6 +71,24 @@
       return section;
     });
     menuList.replaceChildren(...sections);
+
+    // 769px以上では全料理を常時表示し、スマホだけ開閉状態を反映します。
+    const mobileMenuQuery = window.matchMedia('(max-width: 768px)');
+    const syncMenuMode = () => {
+      menuList.querySelectorAll('.menu-category-button').forEach((button) => {
+        const panel = document.getElementById(button.getAttribute('aria-controls'));
+        if (!panel) return;
+        panel.hidden = mobileMenuQuery.matches
+          ? button.getAttribute('aria-expanded') !== 'true'
+          : false;
+      });
+    };
+    syncMenuMode();
+    if ('addEventListener' in mobileMenuQuery) {
+      mobileMenuQuery.addEventListener('change', syncMenuMode);
+    } else {
+      mobileMenuQuery.addListener(syncMenuMode);
+    }
   }
 
   document.querySelectorAll('[data-dish]').forEach((item, index) => {
