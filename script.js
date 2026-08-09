@@ -72,8 +72,8 @@
     });
     menuList.replaceChildren(...sections);
 
-    // 769px以上では全料理を常時表示し、スマホだけ開閉状態を反映します。
-    const mobileMenuQuery = window.matchMedia('(max-width: 768px)');
+    // 768px以上では全料理を常時表示し、767px以下だけ開閉状態を反映します。
+    const mobileMenuQuery = window.matchMedia('(max-width: 767px)');
     const syncMenuMode = () => {
       menuList.querySelectorAll('.menu-category-button').forEach((button) => {
         const panel = document.getElementById(button.getAttribute('aria-controls'));
